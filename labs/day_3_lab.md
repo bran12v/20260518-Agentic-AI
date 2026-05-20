@@ -20,7 +20,7 @@ Yesterday's lecture introduced generators as the lazy alternative to lists. Toda
 
 ## Exercise 1: Convert a List Pipeline to a Generator Pipeline (~40 min)
 
-**Goal:** Implement two versions of "count P1/P2 incidents older than 12 hours" — one with intermediate lists, one with generator pipelines — and measure the peak memory of each with `tracemalloc`.
+**Goal:** Implement two versions of "count P1/P2 incidents older than 12 hours" — one with list comprehensions, one with generator pipelines — and measure the peak memory of each with `tracemalloc`.
 
 **Estimated time:** 40 minutes.
 
