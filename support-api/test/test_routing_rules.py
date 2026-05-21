@@ -28,3 +28,19 @@ def test_urgent_billing_goes_to_finance_lead(router):
 def test_unknown_category_raises(router):
     with pytest.raises(NoMatchingRule):
         router.route(_ticket(category="unknown-category"))
+
+
+# parametrized decorator -> run multiple use case on a single function as separate tests
+# no test case fails silently
+@pytest.mark.parametrize(
+    "category,expected_queue",
+    [
+        ("billing", "billing-team"),
+        ("technical", "tier2-tech"),
+        ("account", "account-team"),
+        ("general", "support-triage")
+    ]
+)
+def test_category_defaults(router, category, expected_queue):
+    decision = router.route(_ticket(category=category))
+    assert decision.queue == expected_queue
