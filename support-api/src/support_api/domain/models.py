@@ -40,3 +40,33 @@ class Customer(BaseModel):
     plan: Plan
     primary_contact_email: str | None = None
     created_at: datetime
+
+
+class TicketPatch(BaseModel):
+    """Body schema for PATCH /tickets/<id>. All fields are optional. These are our changable fields"""
+
+    model_config = ConfigDict(extra="forbid")
+
+    title: str | None = Field(default=None, min_length=5, max_length=200)
+    body: str | None = Field(default=None, min_length=1)
+    priority: Priority | None = None
+    status: Status | None = None
+    category: Category | None = None
+    assignee: str | None = None
+    tags: list[str] | None = Field(default=None, max_length=10)
+
+class TicketCreate(BaseModel):
+    """Body schema for POST /tickets. Server assigns ids + timestamps"""
+
+    model_config = ConfigDict(extra="forbid")
+
+    title: str = Field(min_length=5, max_length=200)
+    body: str = Field(min_length=1)
+    priority: Priority
+    category: Category
+    tenant: str = Field(min_length=1, max_length=50)
+    customer_id: str = Field(pattern=r"^CUS-\d{5}$") # CUS-10001
+    assignee: str | None = None # optional, user may not know 
+    channel: Channel
+    tags: list[str] = Field(default_factory=list, max_length=10)
+    status: Status = "open"
