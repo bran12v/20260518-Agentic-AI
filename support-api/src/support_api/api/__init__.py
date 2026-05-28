@@ -2,6 +2,7 @@ from flask import Flask
 
 from support_api.api.blueprints.tickets import bp as tickets_bp
 from support_api.api.errors import register_error_handlers
+from support_api.api.middleware import register_request_logging
 from support_api.logging import configure_logging
 
 # Entrypoint
@@ -15,6 +16,7 @@ def create_app():
     # Mount the blueprint at /tickets.
     app.register_blueprint(tickets_bp, url_prefix="/tickets")
     register_error_handlers(app)
+    register_request_logging(app)
 
     # root
     @app.route("/", methods=["GET"])
