@@ -2,3 +2,4 @@
 support_api.egg-info
 __pycache__
 .env
+tickets.db
