@@ -44,9 +44,9 @@ def format_ticket_row(ticket):
     if len(short_title) > 50:
         short_title = short_title[:47] + "..."
     return (
-        f"{ticket["id"]:<10}" 
-        f"{ticket["priority"]:<8}" 
-        f"{ticket["status"]:<20}" 
+        f"{ticket["id"]:<10}"
+        f"{ticket["priority"]:<8}"
+        f"{ticket["status"]:<20}"
         f"{short_title}"
     )
 
