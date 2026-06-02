@@ -7,6 +7,10 @@ from support_api.api.blueprints.tickets import bp as tickets_bp
 from support_api.api.errors import register_error_handlers
 from support_api.api.middleware import register_request_logging
 from support_api.logging import configure_logging
+from support_api.api.blueprints.health import bp as health_bp
+
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 _DEFAULT_DB_PATH = (
     Path(__file__).resolve().parent.parent.parent.parent / "tickets.db"
@@ -26,8 +30,16 @@ def create_app(db_path: Path | str | None = None) -> Flask:
 
     # Mount the blueprint at /tickets.
     app.register_blueprint(tickets_bp, url_prefix="/tickets")
+    app.register_blueprint(health_bp)
     register_error_handlers(app)
     register_request_logging(app)
+
+    Limiter(
+        key_func=get_remote_address,
+        app=app,
+        default_limits=["200 per minute"],
+        storage_uri="memory://",
+    )
 
     @app.teardown_appcontext
     def _close_db(_exc):
