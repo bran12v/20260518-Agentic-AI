@@ -1,0 +1,43 @@
+[project]
+name = "support-agents"
+version = "0.1.0"
+description = "Customer Support Intelligence Platform — AI agent system consuming support-api."
+requires-python = ">=3.12"
+readme = "README.md"
+dependencies = [
+    # Added week-by-week. Week 03: direct openai SDK + Pydantic + python-dotenv.
+    # Week 05 will add: langchain, langchain-openai, langgraph, tenacity.
+    # Week 06 will add: mcp (the MCP SDK).
+    # Week 07 will add: pgvector client + httpx (for richer support-api calls).
+    "openai>=1.60",
+    "pydantic>=2.10",
+    "python-dotenv>=1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3",
+    "pytest-asyncio>=0.25",
+    "ruff>=0.8",
+    "mypy>=1.13",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.mypy]
+python_version = "3.12"
+strict = true

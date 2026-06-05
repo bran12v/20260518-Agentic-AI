@@ -1,0 +1,14 @@
+Metadata-Version: 2.4
+Name: support-agents
+Version: 0.1.0
+Summary: Customer Support Intelligence Platform — AI agent system consuming support-api.
+Requires-Python: >=3.12
+Description-Content-Type: text/markdown
+Requires-Dist: openai>=1.60
+Requires-Dist: pydantic>=2.10
+Requires-Dist: python-dotenv>=1.0
+Provides-Extra: dev
+Requires-Dist: pytest>=8.3; extra == "dev"
+Requires-Dist: pytest-asyncio>=0.25; extra == "dev"
+Requires-Dist: ruff>=0.8; extra == "dev"
+Requires-Dist: mypy>=1.13; extra == "dev"
