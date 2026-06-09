@@ -13,7 +13,12 @@ def triage(body: str) -> TriageSuggestion:
         messages=[
             {
                 "role": "system",
-                "content": "You are a triage assistant for a customer-support platform.",
+                "content": "You are a triage assistant for a customer-support platform."
+                "Assign priority by impact, not tone:"
+                "- urgent: active outage, data loss, sercurity incident, or full blocked work. Active critical issue, currently occuring."
+                "- high: significant problem with real business/financial concequences/impacts in the near-term"
+                "- normal: a routine issue, or question without a deadline"
+                "- low: praise, feedback, or a minor non-blocking issue.",
             },
             { "role": "user", "content": f"Triage the inbound ticket: \n\n{body}"}
         ],
