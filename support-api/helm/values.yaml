@@ -1,0 +1,57 @@
+# Default values for support-api templates.
+
+replicaCount: 2
+
+image:
+  repository: acrsupportapidevbvanek.azurecr.io/support-api
+  tag: "0.2.0"
+  # This just saves us bandwidth on redeploys.
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 5000
+
+# public url
+ingress:
+  enabled: false
+  className: nginx
+  host: support-api.example.com
+  tls:
+    enabled: false
+    secretName: support-api-tls
+
+database:
+  url: "" # ex postgresql://support:support_dev@db:5432/support
+  secret:
+    name: "" # db name
+    key: "url" # connection string
+
+# Default resource allocations for our containers unless overriden
+resources:
+  request:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 256Mi
+
+prodes:
+  liveness:
+    path: /live
+    initialDelaySeconds: 10
+    periodSeconds: 20
+  readiness:
+    path: /ready
+    initialDelaySeconds: 5
+    periodSeconds: 10
+
+# Pod-level security defaults.
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 10001
+  runAsGroup: 10001
+
+# Name of the service account identity bound to the cluster. Leave blank if using the default service account
+serviceAccountName: ""

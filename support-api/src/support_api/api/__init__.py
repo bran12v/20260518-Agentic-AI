@@ -12,20 +12,18 @@ from support_api.api.blueprints.health import bp as health_bp
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
-_DEFAULT_DB_PATH = (
-    Path(__file__).resolve().parent.parent.parent.parent / "tickets.db"
-)
+_DEFAULT_DATABASE_URL = "postgresql://support:support_dev@db:5432/support"
 
 # Entrypoint
-def create_app(db_path: Path | str | None = None) -> Flask:
+def create_app(database_url: Path | str | None = None) -> Flask:
     # makes sure that Flasks inital startup events go thru struct log
     configure_logging()
 
     # __name__ tells Flask where to anchor static/template paths
     app = Flask(__name__)
 
-    app.config["DB_PATH"] = str(
-        db_path or os.environ.get("DB_PATH") or _DEFAULT_DB_PATH
+    app.config["DATABASE_URL"] = str(
+        database_url or os.environ.get("DATABASE_URL") or _DEFAULT_DATABASE_URL
     )
 
     # Mount the blueprint at /tickets.

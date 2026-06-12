@@ -1,0 +1,9 @@
+apiVersion: v2
+name: support-api
+version: 0.1.0
+description: Customer Support Intelligence Platform - backend API
+type: application
+appVersion: "0.2.0"
+maintainers:
+  - name: Brandon Vanek
+home: https://github.com/bran12v/20260518-Agentic-AI

@@ -17,7 +17,7 @@ log = structlog.get_logger(__name__)
 def _db():
     if "db" not in g:
         from support_api.storage import connect
-        g.db = connect(current_app.config["DB_PATH"])
+        g.db = connect(current_app.config["DATABASE_URL"])
         log.info("connection_estabilished", db=g.db)
     return g.db # db connection
 
@@ -49,7 +49,9 @@ def get_ticket(ticket_id: str):
 def create_ticket():
     data = TicketCreate.model_validate(request.get_json(silent=True) or {})
     conn = _db()
-    count = conn.execute("SELECT COUNT(*) AS n FROM tickets").fetchone()["n"]
+    with conn.cursor() as cur:
+        cur.execute("SELECT COUNT(*) AS n FROM tickets")
+        count = cur.fetchone()["n"]
     now = datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
     new_ticket = {
         **data.model_dump(),
