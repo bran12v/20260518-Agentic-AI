@@ -7,7 +7,12 @@ name: support-api
 
 on: # trigger
     push: 
-        branches: [main, staging]
+        branches: [main]
+        paths:
+            - "support-api/**"
+            - ".github/workflows/support-api.yaml"
+    pull_request: 
+        branches: [main]
         paths:
             - "support-api/**"
             - ".github/workflows/support-api.yaml"
