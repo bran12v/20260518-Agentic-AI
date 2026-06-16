@@ -37,16 +37,16 @@ def init_db(database_url: Path | str | None = None) -> None:
 
 # seeding of the db
 def seed_from_json(
-        database_url: Path | str | None = None,
-        customers_json: Path | str | None = None,
-        tickets_json: Path | str | None = None,
+        database_url: str | None = None,
+        customers_json: Path | None = None,
+        tickets_json: Path | None = None,
     ) -> tuple[int, int]:
     """Load in the JSON seed files into the DB."""
     customers_json = customers_json or (_DATA_DIR / "customers.json")
     tickets_json = tickets_json or (_DATA_DIR / "tickets.json")
 
-    customers = json.loads((customers_json).read_text(encoding="utf-8"))
-    tickets = json.loads((tickets_json).read_text(encoding="utf-8"))
+    customers = json.loads(Path(customers_json).read_text(encoding="utf-8"))
+    tickets = json.loads(Path(tickets_json).read_text(encoding="utf-8"))
 
 
     conn = connect(database_url)
@@ -76,17 +76,17 @@ def seed_from_json(
                 VALUES (%(id)s, %(title)s, %(body)s, %(priority)s, %(status)s, %(category)s, %(tenant)s,
                     %(customer_id)s, %(assignee)s, %(channel)s, %(tags)s, %(created_at)s, %(updated_at)s)
                 ON CONFLICT (id) DO UPDATE SET
-                    title = EXCLUDED.title
-                    body = EXCLUDED.body
-                    priority = EXCLUDED.priority
-                    status = EXCLUDED.status
-                    category = EXCLUDED.category
-                    tenant = EXCLUDED.tenant
-                    customer_id = EXCLUDED.customer_id
-                    assignee = EXCLUDED.assignee
-                    channel = EXCLUDED.channel
-                    tags = EXCLUDED.tags
-                    created_at = EXCLUDED.created_at
+                    title = EXCLUDED.title,
+                    body = EXCLUDED.body,
+                    priority = EXCLUDED.priority,
+                    status = EXCLUDED.status,
+                    category = EXCLUDED.category,
+                    tenant = EXCLUDED.tenant,
+                    customer_id = EXCLUDED.customer_id,
+                    assignee = EXCLUDED.assignee,
+                    channel = EXCLUDED.channel,
+                    tags = EXCLUDED.tags,
+                    created_at = EXCLUDED.created_at,
                     updated_at = EXCLUDED.updated_at
                 """,
                 [ 

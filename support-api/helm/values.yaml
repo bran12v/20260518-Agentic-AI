@@ -1,4 +1,4 @@
-# Default values for support-api templates.
+# Default values for support-api templates. "Global Variables"
 
 replicaCount: 2
 
@@ -30,14 +30,14 @@ database:
 
 # Default resource allocations for our containers unless overriden
 resources:
-  request:
+  requests:
     cpu: 100m
     memory: 128Mi
   limits:
     cpu: 500m
     memory: 256Mi
 
-prodes:
+probes:
   liveness:
     path: /live
     initialDelaySeconds: 10
