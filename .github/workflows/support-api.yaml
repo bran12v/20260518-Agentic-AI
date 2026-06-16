@@ -82,7 +82,7 @@ jobs:
     push:
         needs: build
         runs-on: ubuntu-latest # if we pushed on main only
-        if: github.event_name == 'push' && github.ref == 'ref/heads/main' 
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' 
         steps:
             - uses: actions/checkout@v4
 
@@ -107,7 +107,7 @@ jobs:
     deploy:
         needs: [build, push]
         runs-on: ubuntu-latest
-        if: github.event_name == 'push' && github.ref == 'ref/heads/main' 
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' 
         steps:
             - uses: actions/checkout@v4
 
