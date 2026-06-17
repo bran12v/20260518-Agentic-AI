@@ -4,7 +4,9 @@ Use schema enforced structure output so the LLM's response fits directly into th
 """
 from support_agents.config import openai_client, MODEL
 
-from support_agents.domain.models import TriageSuggestion
+from support_agents.schemas import TriageSuggestion, Category, Priority
+
+__all__ = ["Category", "Priority", "TriageSuggestion", "triage", "TKT_10001_BODY"]
 
 def triage(body: str) -> TriageSuggestion:
     response = openai_client().chat.completions.create(
