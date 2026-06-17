@@ -53,7 +53,7 @@ def list_tickets(conn, priority=None, tenant=None, status=None, limit=100):
 
 def get_ticket(conn, ticket_id):
     with conn.cursor() as cur:
-        conn.execute("SELECT * FROM tickets WHERE id = %s", (ticket_id,))
+        cur.execute("SELECT * FROM tickets WHERE id = %s", (ticket_id,))
         row = cur.fetchone()
     return _row_to_ticket(row) if row else None
 
