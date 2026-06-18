@@ -37,3 +37,14 @@ async def search_tenant_recent_tickets(tenant: str, limit: int = 20) -> list[dic
     return await api_client.list_tickets(tenant=tenant, limit=limit)
 
 # listing tenants open tickets
+@tool
+async def list_tenant_open_tickets(tenant: str) -> list[dict]:
+    """List the tenant's currently OPEN tickets (status='open') to a maximum of 100 entries.
+    
+    Use to see the tenant's current support queue. Helps decide whether a new ticket
+    is an escalation of an existing thread or a new separate issue. 
+    """
+    return await api_client.list_tickets(tenant=tenant, status="open", limit=100)
+
+# export as a list so the agent.py and future files can import all tools under one name.
+TRIAGE_TOOLS = [get_ticket_detail, search_tenant_recent_tickets, list_tenant_open_tickets]
