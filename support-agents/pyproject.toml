@@ -16,6 +16,7 @@ dependencies = [
     "langchain-openai>=0.3.0",
     "httpx>=0.28",
     "tenacity>=9.0",
+    "langgraph>=0.2.60",
 ]
 
 [project.optional-dependencies]

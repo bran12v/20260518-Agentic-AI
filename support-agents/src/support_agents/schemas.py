@@ -13,3 +13,11 @@ class TriageSuggestion(BaseModel):
     suggest_team: str | None = Field(
         description="Team name in kebab-case, e.g. 'billing-team'. None if unclear"
     )
+    confidence: float = Field(
+        ge=0.0,
+        le=1.0,
+        description=(
+            "How sure the model is, 0.0 to 1.0. Below 0.6 the graph routes to" \
+            "a human queue instead of automated team."
+        )
+    )
