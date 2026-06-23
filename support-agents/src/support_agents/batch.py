@@ -8,7 +8,7 @@ import time
 from langchain_core.rate_limiters import InMemoryRateLimiter
 from support_agents.config import langchain_chat_model
 from support_agents.schemas import TriageSuggestion
-from support_agents.triage_chain import _PREP, _CLASSIFY_PROMPT
+from support_agents.LangChain.triage_chain import _PREP, _CLASSIFY_PROMPT
 
 from tenacity import (
     AsyncRetrying,
@@ -85,7 +85,7 @@ async def benchmark(sample_size: int = 10) -> None:
     """Compare serial vs concurrent classification on a small sample. Pulls
     real tickets from support-api so timing reflects real network + LLM latency."""
     from support_agents import api_client
-    from support_agents.triage_chain import build_classifier_chain
+    from support_agents.LangChain.triage_chain import build_classifier_chain
 
     tickets = await api_client.list_tickets(status="open", limit=sample_size)
     chain = build_classifier_chain()

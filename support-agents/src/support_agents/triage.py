@@ -36,7 +36,7 @@ def triage(body: str) -> TriageSuggestion:
     return TriageSuggestion.model_validate_json(response.choices[0].message.content)
 
 TKT_10001_BODY = (
-    "Hi team - our April invoice (INV-2026-04-88421, TKT-10002) shows two line items of $4,200 for the exact same seat pack. Pretty sure we only added 14 seats, not 28. Can someone look into this before our AP cutoff on the 25th? Happy to send screenshots."
+    "Hi team - our April invoice (INV-2026-04-88421) shows two line items of $4,200 for the exact same seat pack. Pretty sure we only added 14 seats, not 28. Can someone look into this before our AP cutoff on the 25th? Happy to send screenshots."
 )
 
 def main() -> None:

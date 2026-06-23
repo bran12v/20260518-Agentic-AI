@@ -5,7 +5,7 @@ from langchain_core.messages import BaseMessage, HumanMessage, SystemMessage
 
 from support_agents.config import langchain_chat_model
 from support_agents.triage import TriageSuggestion
-from support_agents.triage_chain import build_classifier_chain
+from support_agents.LangChain.triage_chain import build_classifier_chain
 
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode
