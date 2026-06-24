@@ -14,7 +14,7 @@ from typing import TypedDict
 from langchain_core.messages import HumanMessage, SystemMessage
 from langgraph.graph import START, END, StateGraph
 from pydantic import BaseModel, Field
-
+from support_agents.graph_viz import draw_graphs
 from support_agents.config import langchain_chat_model
 from support_agents.LangGraph.specialists import SPECIALIST_BUILDERS
 from support_agents.LangGraph.supervisor import SupervisorSpecialist
@@ -119,6 +119,11 @@ async def _synthesize_node(state: PlanState) -> dict:
     )
     return {"final_plan": result.content} # nodes return dictionaries -> dict's update the state object
 
+def print_graphs() -> None:
+    draw_graphs([
+        ("Orchestrator Graph", build_orchestrator_graph)
+    ])
+
 def build_orchestrator_graph():
     """Compile the orchestrator-worker graph: decompose -> workers -> synthesize"""
     graph = StateGraph(PlanState)
@@ -133,6 +138,12 @@ def build_orchestrator_graph():
     return graph.compile()
 
 async def main() -> None:
+    import sys
+
+    if "--graph" in sys.argv:
+        await print_graphs()
+        return
+    
     graph = build_orchestrator_graph()
     request = (
         "We're migrating Globex from the legacy plan to enterprise. Produce an "
