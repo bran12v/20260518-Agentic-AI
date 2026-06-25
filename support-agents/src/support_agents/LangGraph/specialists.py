@@ -29,10 +29,7 @@ TECHNICAL_SYSTEM = (
     "tenant's OPEN tickets — outages often show as many correlated tickets. "
     "Route anything not clearly technical back to the supervisor with "
     "'OUT OF SCOPE: routes to <team>'." \
-    "Tool discipline: only call `get_ticket` when the body contains a literal "
-    "`TKT-NNNNN` identifier. Invoice numbers (`INV-...`), dates, and other "
-    "digit-containing codes are NOT ticket IDs. If no ticket ID appears in the "
-    "body, classify from the body text alone — do not invent IDs to look up."
+    "Utilize tools at your disposal according to their tool descriptions"
 )
 
 ACCOUNT_SYSTEM = (

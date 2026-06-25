@@ -21,3 +21,5 @@ src/support_agents/LangGraph/react_agent.py
 src/support_agents/LangGraph/specialists.py
 src/support_agents/LangGraph/supervisor.py
 src/support_agents/LangGraph/team_graph.py
+src/support_agents/mcp/__init__.py
+src/support_agents/mcp/kb_server.py
