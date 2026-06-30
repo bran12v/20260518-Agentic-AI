@@ -1,5 +1,3 @@
-CREATE EXTENSION IF NOT EXISTS vector;
-
 CREATE TABLE IF NOT EXISTS customers (
     id                      TEXT PRIMARY KEY,
     name                    TEXT NOT NULL,
@@ -44,30 +42,3 @@ CREATE TABLE IF NOT EXISTS conversation_turns (
 );
 
 CREATE INDEX IF NOT EXISTS ix_turns_ticket_id ON conversation_turns(ticket_id);
-
-CREATE TABLE IF NOT EXISTS kb_articles (
-    id              TEXT PRIMARY KEY,
-    title           TEXT NOT NULL,
-    category        TEXT NOT NULL CHECK (category IN ('billing', 'technical', 'account', 'general')),
-    source_path     TEXT NOT NULL,
-    body            TEXT NOT NULL,
-    tags            TEXT NOT NULL DEFAULT '[]',
-    created_at      TEXT NOT NULL
-);
-
-CREATE INDEX IF NOT EXISTS ix_kb_articles_category ON kb_articles(category);
-
-CREATE TABLE IF NOT EXISTS kb_chunks (
-    id              INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    article_id      TEXT NOT NULL REFERENCES kb_articles(id) ON DELETE CASCADE,
-    chunk_index     INTEGER NOT NULL,
-    chunk_text      TEXT NOT NULL,
-    embedding       vector(1536),  --  the pgvector type. embedding model outputs the embedding in 1536 dimensions
-    UNIQUE (article_id, chunk_index)
-);
-
-
-CREATE INDEX IF NOT EXISTS ix_kb_chunks_article_id ON kb_chunks(article_id);
-
- CREATE INDEX IF NOT EXISTS ix_kb_chunks_embedding_hnsw
-    ON kb_chunks USING hnsw (embedding vector_cosine_ops); -- IVFFlat

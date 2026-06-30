@@ -69,34 +69,3 @@ def insert_ticket(conn, ticket):
         """,
         {**ticket, "tags": json.dumps(ticket.get("tags", []))}
     )
-
-def insert_kb_article(conn: psycopg.Connection, article: dict[str, Any]) -> None:
-    """Upsert a KB article row."""
-    with conn.cursor() as cur:
-        cur.execute(
-            """
-            INSERT INTO kb_articles
-                (id, title, category, source_path, body, tags, created_at)
-            VALUES (%(id)s, %(title)s, %(category)s, %(source_path)s, %(body)s, %(tags)s, %(created_at)s)
-            ON CONFLICT (id) DO UPDATE SET
-                title = EXCLUDED.title,
-                category = EXCLUDED.category,
-                source_path = EXCLUDED.source_path,
-                body = EXCLUDED.body,
-                tags = EXCLUDED.tags
-            """,
-            {**article, "tags": json.dumps(article.get("tags", []))}, # Values
-        )
-
-def insert_kb_chunk(conn: psycopg.Connection, article_id, chunk_index: int, chunk_text: str) -> None:
-    """Upsert a chunk with a NULL embedding. embed_kb.py backfill"""
-    with conn.cursor() as cur:
-        cur.execute(
-            """
-            INSERT INTO kb_chunks (article_id, chunk_index, chunk_text)
-            VALUES (%s, %s, %s)
-            ON CONFLICT (article_id, chunk_index) DO UPDATE SET
-                chunk_text = EXCLUDED.chunk_text
-            """,
-            (article_id, chunk_index, chunk_text),
-        )

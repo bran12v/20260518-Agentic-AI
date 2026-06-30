@@ -15,7 +15,7 @@ FROM python:3.12-slim AS runtime
 
 # Sets the venv bin folder to be in the PATH variable, allowing us to run pip/python/gunicorn etc without specifying the absolute path
 # Python buffers stdout - log output gets stuck in a buffer and docker logs shows nothing until the buffer fills or the process exits w/o this var
-ENV PATH="/opt/venv/bin:$PATH" PYTHONUNBUFFERED=1
+ENV PATH="/opt/venv/bin:$PATH" PYTHONUNBUFFERED=1 DATA_DIR=/app/data
 
 # Create a group and a user for the docker system to be able to run our python app
 RUN groupadd --system --gid 10001 app && useradd --system --uid 10001 --gid 10001 --create-home app 

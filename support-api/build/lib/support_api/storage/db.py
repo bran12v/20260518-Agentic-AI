@@ -1,6 +1,5 @@
 """PosgreSQL DB file"""
-from datetime import datetime, timezone
-import re
+
 import json
 import os
 from pathlib import Path
@@ -9,23 +8,13 @@ from typing import Any
 import psycopg
 from psycopg.rows import dict_row
 
-from support_api.storage.chunking import chunk_text
-from support_api.storage.queries import insert_kb_article, insert_kb_chunk
-
 
 #schema path
 SCHEMA_PATH = Path(__file__).resolve().parent / "schema.sql"
 #json files path
-_DATA_DIR = (
-    Path(os.environ["DATA_DIR"])
-    if os.environ.get("DATA_DIR")
-    else Path(__file__).resolve().parent.parent.parent.parent / "data"
-)
-_KB_DIR = _DATA_DIR / "kb_articles"
-_KB_MANIFEST = _DATA_DIR / "kb_articles_manifest.json"
-
+_DATA_DIR = Path(__file__).resolve().parent.parent.parent.parent / "data"
 #db path
-DEFAULT_DATABASE_URL = "postgresql://support:support_dev@localhost:5433/support"
+DEFAULT_DATABASE_URL = "postgresql://support:support_dev@db:5432/support"
 
 def _connection_string(database_url: Path | str | None) -> Path | str:
     """Priority: explicit db_url arg > db_url env var > Module default"""
@@ -51,7 +40,6 @@ def seed_from_json(
         database_url: str | None = None,
         customers_json: Path | None = None,
         tickets_json: Path | None = None,
-        seed_kb: bool = True,
     ) -> tuple[int, int]:
     """Load in the JSON seed files into the DB."""
     customers_json = customers_json or (_DATA_DIR / "customers.json")
@@ -109,62 +97,7 @@ def seed_from_json(
                     for t in tickets
                 ]
             )
-            if seed_kb:
-                _seed_kb_articles(conn)
         conn.commit()
     finally:
         conn.close()
     return len(customers), len(tickets)
-
-_TITLE_RE = re.compile(r"^\s*#\s+(.+?)\s*$", re.MULTILINE)
-
-def _parse_title(markdown: str, fallback: str) -> str:
-    """Extract the first H1 tag from the markdown body. Falls back to the filename
-    stem (minus the extension) if no H1 is found"""
-    match = _TITLE_RE.search(markdown)
-    return match.group(1) if match else fallback
-
-def _seed_kb_articles(conn: psycopg.Connection) -> None:
-    """Walk through the manifest, insert every article, chunk its body and insert chunks."""
-
-    manifest = json.loads(_KB_MANIFEST.read_text(encoding="utf-8"))
-    now = datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z") #created_at timestamp
-
-    for entry in manifest:
-        body = (_KB_DIR / entry["source"]).read_text(encoding="utf-8")
-        article = {
-            "id": entry["id"],
-            "title": _parse_title(body, fallback=entry["source"]),
-            "category": entry["category"],
-            "source_path": entry["source"],
-            "body": body,
-            "tags": entry.get("tags", []),
-            "created_at": now
-        }
-        insert_kb_article(conn, article)
-        for index, chunk in enumerate(chunk_text(body)):
-            insert_kb_chunk(
-                conn,
-                article_id=entry["id"],
-                chunk_index=index,
-                chunk_text=chunk
-            )
-
-def drop_all(database_url: str | None = None) -> None:
-    """Drop every table in our schema. Test fixtures use this between runs.
-    Production code should never call this."""
-    conn = connect(database_url)
-    try:
-        with conn.cursor() as cur:
-            cur.execute(
-                """
-                DROP TABLE IF EXISTS kb_chunks CASCADE;
-                DROP TABLE IF EXISTS kb_articles CASCADE;
-                DROP TABLE IF EXISTS conversation_turns CASCADE;
-                DROP TABLE IF EXISTS tickets CASCADE;
-                DROP TABLE IF EXISTS customers CASCADE;
-                """
-            )
-        conn.commit()
-    finally:
-        conn.close()

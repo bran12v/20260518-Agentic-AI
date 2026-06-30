@@ -1,0 +1,74 @@
+[
+  {
+    "id": "kb-0001",
+    "category": "account",
+    "tags": ["password", "auth", "2fa", "self-service"],
+    "source": "kb-0001-resetting-account-password.md"
+  },
+  {
+    "id": "kb-0002",
+    "category": "billing",
+    "tags": ["invoice", "line-items", "proration", "seats"],
+    "source": "kb-0002-understanding-invoice-line-items.md"
+  },
+  {
+    "id": "kb-0003",
+    "category": "technical",
+    "tags": ["api", "rate-limit", "429", "retry", "throttling"],
+    "source": "kb-0003-api-rate-limits-and-429.md"
+  },
+  {
+    "id": "kb-0004",
+    "category": "account",
+    "tags": ["sso", "saml", "enterprise", "identity"],
+    "source": "kb-0004-sso-enablement-for-enterprise.md"
+  },
+  {
+    "id": "kb-0005",
+    "category": "account",
+    "tags": ["seats", "provisioning", "users", "licenses"],
+    "source": "kb-0005-seat-provisioning-and-removal.md"
+  },
+  {
+    "id": "kb-0006",
+    "category": "technical",
+    "tags": ["webhooks", "delivery", "retries", "events"],
+    "source": "kb-0006-webhook-delivery-and-retries.md"
+  },
+  {
+    "id": "kb-0007",
+    "category": "technical",
+    "tags": ["data-export", "csv", "encoding", "etl"],
+    "source": "kb-0007-data-export-csv-formats.md"
+  },
+  {
+    "id": "kb-0008",
+    "category": "technical",
+    "tags": ["dashboard", "performance", "latency", "troubleshooting"],
+    "source": "kb-0008-troubleshooting-slow-dashboards.md"
+  },
+  {
+    "id": "kb-0009",
+    "category": "technical",
+    "tags": ["api-tokens", "rotation", "scopes", "auth"],
+    "source": "kb-0009-api-token-rotation-and-scopes.md"
+  },
+  {
+    "id": "kb-0010",
+    "category": "billing",
+    "tags": ["dispute", "chargeback", "refund", "policy"],
+    "source": "kb-0010-billing-dispute-resolution.md"
+  },
+  {
+    "id": "kb-0011",
+    "category": "general",
+    "tags": ["data-retention", "compliance", "deletion", "gdpr"],
+    "source": "kb-0011-data-retention-policy.md"
+  },
+  {
+    "id": "kb-0012",
+    "category": "technical",
+    "tags": ["incident", "escalation", "runbook", "oncall"],
+    "source": "kb-0012-incident-escalation-runbook.md"
+  }
+]
