@@ -89,14 +89,44 @@ def insert_kb_article(conn: psycopg.Connection, article: dict[str, Any]) -> None
         )
 
 def insert_kb_chunk(conn: psycopg.Connection, article_id, chunk_index: int, chunk_text: str) -> None:
-    """Upsert a chunk with a NULL embedding. embed_kb.py backfill"""
+    """Upsert a chunk with a NULL embedding. embed_kb.py backfill
+    If the chunk_text changes, the embedding column is reset to NULL so
+    embed_kb.py picks it up on the next run."""
     with conn.cursor() as cur:
         cur.execute(
             """
             INSERT INTO kb_chunks (article_id, chunk_index, chunk_text)
             VALUES (%s, %s, %s)
             ON CONFLICT (article_id, chunk_index) DO UPDATE SET
-                chunk_text = EXCLUDED.chunk_text
+                chunk_text = EXCLUDED.chunk_text,
+                embedding = CASE
+                    WHEN kb_chunks.chunk_text IS DISTINCT FROM EXCLUDED.chunk_text
+                    THEN NULL
+                    ELSE kb_chunks.embedding
+                END
             """,
             (article_id, chunk_index, chunk_text),
         )
+
+def update_kb_chunk_embedding(
+    conn: psycopg.Connection,
+    article_id: str,
+    chunk_index: int,
+    embedding: list[float]
+) -> None:
+    """Set the embedding on a existing chunk row. Used by embed_kb.py"""
+    with conn.cursor() as cur:
+        cur.execute(
+            """
+            UPDATE kb_chunks
+                SET embedding = %s::vector
+            WHERE article_id = %s AND chunk_index = %s
+            """,
+            (_vector_literal(embedding), article_id, chunk_index)
+        )
+
+def _vector_literal(embedding: list[float]) -> str:
+    """::vector is only going to accept the textual form when it casts to a vector.
+    We are doing this to avoid having to write the code to implement this cast ourselves.
+    """
+    return "[" + ",".join(f"{num:.8f}" for num in embedding) + "]" # [1.00000000,2.00000000,3.00000000] <- string

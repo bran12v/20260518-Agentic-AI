@@ -32,6 +32,10 @@ services:
       LOG_LEVEL: info
       LOG_JSON: 1
       DATABASE_URL: postgresql://support:support_dev@db:5432/support
+      AZURE_OPENAI_ENDPOINT: ${AZURE_OPENAI_ENDPOINT}
+      AZURE_OPENAI_API_KEY: ${AZURE_OPENAI_API_KEY}
+      AZURE_OPENAI_EMBEDDING_DEPLOYMENT: ${AZURE_OPENAI_EMBEDDING_DEPLOYMENT}
+      AZURE_OPENAI_API_VERSION: ${AZURE_OPENAI_API_VERSION}
 
     healthcheck:
       test: ["CMD", "python", "-c", "import httpx; httpx.get('http://localhost:5000/ready').raise_for_status()"]
@@ -42,7 +46,7 @@ services:
 
     command: >
       sh -c "
-        python -c 'from support_api.storage import init_db, seed_from_json; init_db(); seed_from_json()' &&
+        python -m support_api.scripts.bootstrap &&
         gunicorn --bind 0.0.0.0:5000 --workers 2 --access-logfile - --error-logfile - 'support_api.api:create_app()'
       "
 

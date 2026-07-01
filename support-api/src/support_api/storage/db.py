@@ -52,6 +52,7 @@ def seed_from_json(
         customers_json: Path | None = None,
         tickets_json: Path | None = None,
         seed_kb: bool = True,
+        seed_core: bool = True,
     ) -> tuple[int, int]:
     """Load in the JSON seed files into the DB."""
     customers_json = customers_json or (_DATA_DIR / "customers.json")
@@ -65,50 +66,51 @@ def seed_from_json(
     try:
         with conn.cursor() as cur:
         # Insert statement for all the data in customers.json, make a row - many times
-            cur.executemany( 
-                """
-                INSERT INTO customers
-                    (id, name, tenant, plan, primary_contact_email, created_at)
-                VALUES (%(id)s, %(name)s, %(tenant)s, %(plan)s, %(primary_contact_email)s, %(created_at)s)
-                ON CONFLICT (id) DO UPDATE SET
-                    name = EXCLUDED.name,
-                    tenant = EXCLUDED.tenant,
-                    plan = EXCLUDED.plan,
-                    primary_contact_email = EXCLUDED.primary_contact_email,
-                    created_at = EXCLUDED.created_at
-                """,
-                customers
-            )
-            # Insert statement for all the data in tickets.json
-            cur.executemany( # not going to duplicate seed, its going to upsert (insert/update)
-                """
-                INSERT INTO tickets
-                    (id, title, body, priority, status, category, tenant,
-                    customer_id, assignee, channel, tags, created_at, updated_at)
-                VALUES (%(id)s, %(title)s, %(body)s, %(priority)s, %(status)s, %(category)s, %(tenant)s,
-                    %(customer_id)s, %(assignee)s, %(channel)s, %(tags)s, %(created_at)s, %(updated_at)s)
-                ON CONFLICT (id) DO UPDATE SET
-                    title = EXCLUDED.title,
-                    body = EXCLUDED.body,
-                    priority = EXCLUDED.priority,
-                    status = EXCLUDED.status,
-                    category = EXCLUDED.category,
-                    tenant = EXCLUDED.tenant,
-                    customer_id = EXCLUDED.customer_id,
-                    assignee = EXCLUDED.assignee,
-                    channel = EXCLUDED.channel,
-                    tags = EXCLUDED.tags,
-                    created_at = EXCLUDED.created_at,
-                    updated_at = EXCLUDED.updated_at
-                """,
-                [ 
-                    {
-                        **t, 
-                        "tags": json.dumps(t.get("tags", []))
-                    } 
-                    for t in tickets
-                ]
-            )
+            if seed_core:
+                cur.executemany( 
+                    """
+                    INSERT INTO customers
+                        (id, name, tenant, plan, primary_contact_email, created_at)
+                    VALUES (%(id)s, %(name)s, %(tenant)s, %(plan)s, %(primary_contact_email)s, %(created_at)s)
+                    ON CONFLICT (id) DO UPDATE SET
+                        name = EXCLUDED.name,
+                        tenant = EXCLUDED.tenant,
+                        plan = EXCLUDED.plan,
+                        primary_contact_email = EXCLUDED.primary_contact_email,
+                        created_at = EXCLUDED.created_at
+                    """,
+                    customers
+                )
+                # Insert statement for all the data in tickets.json
+                cur.executemany( # not going to duplicate seed, its going to upsert (insert/update)
+                    """
+                    INSERT INTO tickets
+                        (id, title, body, priority, status, category, tenant,
+                        customer_id, assignee, channel, tags, created_at, updated_at)
+                    VALUES (%(id)s, %(title)s, %(body)s, %(priority)s, %(status)s, %(category)s, %(tenant)s,
+                        %(customer_id)s, %(assignee)s, %(channel)s, %(tags)s, %(created_at)s, %(updated_at)s)
+                    ON CONFLICT (id) DO UPDATE SET
+                        title = EXCLUDED.title,
+                        body = EXCLUDED.body,
+                        priority = EXCLUDED.priority,
+                        status = EXCLUDED.status,
+                        category = EXCLUDED.category,
+                        tenant = EXCLUDED.tenant,
+                        customer_id = EXCLUDED.customer_id,
+                        assignee = EXCLUDED.assignee,
+                        channel = EXCLUDED.channel,
+                        tags = EXCLUDED.tags,
+                        created_at = EXCLUDED.created_at,
+                        updated_at = EXCLUDED.updated_at
+                    """,
+                    [ 
+                        {
+                            **t, 
+                            "tags": json.dumps(t.get("tags", []))
+                        } 
+                        for t in tickets
+                    ]
+                )
             if seed_kb:
                 _seed_kb_articles(conn)
         conn.commit()

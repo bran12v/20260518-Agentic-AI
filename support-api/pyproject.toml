@@ -12,6 +12,7 @@ dependencies = [
     "flask-limiter>=3.8",
     "psycopg[binary]>=3.2",
     "tiktoken>=0.8",
+    "openai>1.50",
 ]
 
 [project.optional-dependencies]

@@ -31,23 +31,7 @@ spec: # deployment spec - kubectl apply -f deployment.yaml
                 - name: db-bootstrap
                   image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}" # acrsupportapidevbvanek.azurecr.io/support-api:0.2.0
                   imagePullPolicy: {{ .Values.image.pullPolicy }}
-                  command:
-                    - python
-                    - -c
-                    - |
-                        from support_api.storage import connect, init_db, seed_from_json
-                        init_db()
-                        with connect() as conn, conn.cursor() as cur:
-                            cur.execute("SELECT count(*) AS n FROM tickets")
-                            n = cur.fetchone()["n"]
-                        if n == 0:
-                            seed_from_json(
-                                customers_json="/app/data/customers.json",
-                                tickets_json="/app/data/tickets.json",
-                            )
-                            print("seeded fresh")
-                        else:
-                            print(f"skipped seed; {n} rows already present")
+                  command: ["python", "-m", "support_api.scripts.bootstrap"]
                   env:
                     {{- if .Values.database.secret.name }}
                     - name: DATABASE_URL
@@ -59,6 +43,11 @@ spec: # deployment spec - kubectl apply -f deployment.yaml
                     - name: DATABASE_URL
                       value: {{ .Values.database.url | quote}}
                     {{- end }}
+                  {{- if .Values.aoai.secret.name }}
+                  envFrom:
+                    - secretRef:
+                      name: {{ .Values.aoai.secret.name }} # this is the secret to our embeddings model
+                  {{- end}}
             containers: # main containers
                 - name: support-api
                   image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}" # acrsupportapidevbvanek.azurecr.io/support-api:0.2.0

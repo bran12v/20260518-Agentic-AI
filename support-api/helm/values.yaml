@@ -22,6 +22,10 @@ ingress:
     enabled: false
     secretName: support-api-tls
 
+aoai:
+  secret:
+    name: support-api-aoai
+
 database:
   url: "" # ex postgresql://support:support_dev@db:5432/support
   secret:

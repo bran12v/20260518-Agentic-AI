@@ -137,6 +137,7 @@ jobs:
                 --set image.tag="${IMAGE_TAG}" \
                 --set database.secret.name=support-api-db \
                 --set database.secret.key=url \
+                --set aoai.secret.name=support-api-aoai \
                 --wait --timeout 5m
 
 
