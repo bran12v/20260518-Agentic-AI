@@ -46,7 +46,7 @@ spec: # deployment spec - kubectl apply -f deployment.yaml
                   {{- if .Values.aoai.secret.name }}
                   envFrom:
                     - secretRef:
-                      name: {{ .Values.aoai.secret.name }} # this is the secret to our embeddings model
+                        name: {{ .Values.aoai.secret.name }} # this is the secret to our embeddings model
                   {{- end}}
             containers: # main containers
                 - name: support-api
